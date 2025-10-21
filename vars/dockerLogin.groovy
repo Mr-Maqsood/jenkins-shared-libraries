@@ -1,6 +1,8 @@
-def call(String credentialsId) {
-    withCredentials([usernamePassword(credentialsId: credentialsId, usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
-        sh 'echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin'
-        env.DOCKERHUB_USER = "$DOCKERHUB_USER"
-    }
+def call(String backendPath, String frontendPath, String imageTag) {
+    env.BACKEND_TAG_DH  = "${env.DOCKERHUB_USER}/three-tier-app-backend:${imageTag}"
+    env.FRONTEND_TAG_DH = "${env.DOCKERHUB_USER}/three-tier-app-frontend:${imageTag}"
+    sh """
+        docker build -t ${BACKEND_TAG_DH} ${backendPath}
+        docker build -t ${FRONTEND_TAG_DH} ${frontendPath}
+    """
 }
